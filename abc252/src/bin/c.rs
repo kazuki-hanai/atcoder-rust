@@ -1,5 +1,4 @@
 use proconio::input;
-use std::cmp::max;
 use std::cmp::min;
 
 #[allow(non_snake_case)]
