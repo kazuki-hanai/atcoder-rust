@@ -10,33 +10,26 @@ fn main() {
 
     A.sort();
 
-    let mut diff_from_left = vec![0; N];
-    let mut diff_from_right = vec![0; N];
-    for i in 1..N {
-        diff_from_left[i] = diff_from_left[i - 1] + (A[i] - A[i - 1]) * i as i64;
-        diff_from_right[(N - 1) - i] =
-            diff_from_right[(N - 1) - i + 1] + (A[(N - 1) - i + 1] - A[((N - 1) - i)]) * i as i64;
+    let mut rw = vec![0; N + 1];
+    for i in 0..N {
+        rw[i + 1] = rw[i] + A[i];
     }
 
-    for x in X.iter() {
-        let i = A.partition_point(|a| a < x);
-        let mut diff_sum = 0;
-        if 0 < i {
-            if i < N && *x == A[i] {
-                diff_sum += diff_from_left[i];
+    for x in X {
+        let (mut st, mut fi) = (0i64, (N - 1) as i64);
+        while st <= fi {
+            let te: i64 = (st + fi) as i64 / 2;
+            if A[te as usize] < x {
+                st = te + 1;
             } else {
-                diff_sum += diff_from_left[i - 1] + (x - A[i - 1]) * i as i64;
+                fi = te - 1;
             }
         }
-        if i == 0 {
-            diff_sum += diff_from_right[i] + (A[i] - x) * N as i64;
-        } else if i < N {
-            if i < N - 1 && *x == A[i] {
-                diff_sum += diff_from_right[i + 1] + (A[i + 1] - x) * (N - i - 1) as i64;
-            } else {
-                diff_sum += diff_from_right[i] + (A[i] - x) * (N - i) as i64;
-            }
-        }
-        println!("{}", diff_sum);
+
+        let mut res = x * st as i64;
+        res -= rw[(fi + 1) as usize];
+        res += rw[N] - rw[st as usize];
+        res -= x * (N - st as usize) as i64;
+        println!("{}", res);
     }
 }
