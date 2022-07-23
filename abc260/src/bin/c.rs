@@ -7,33 +7,15 @@ fn main() {
         Y: usize,
     }
 
-    #[derive(PartialEq)]
-    enum StoneType {
-        Red,
-        Blue,
-    }
-    type Level = usize;
-
-    let mut blue_num = 0;
-    let mut stack: Vec<(StoneType, usize, usize)> = Vec::new();
-    stack.push((StoneType::Red, N, 1));
-
-    while let Some(stone) = stack.pop() {
-        if stone.0 == StoneType::Red {
-            if stone.1 == 1 {
-                continue;
-            }
-            stack.push((StoneType::Red, stone.1 - 1, stone.2));
-            stack.push((StoneType::Blue, stone.1, stone.2 * X));
-        } else {
-            if stone.1 == 1 {
-                blue_num += stone.2;
-                continue;
-            }
-            stack.push((StoneType::Red, stone.1 - 1, stone.2));
-            stack.push((StoneType::Blue, stone.1 - 1, stone.2 * Y));
-        }
+    let mut red_nums_table = vec![0; N + 1];
+    let mut blue_nums_table = vec![0; N + 1];
+    red_nums_table[N] = 1;
+    blue_nums_table[N] = 0;
+    for i in (2..=N).rev() {
+        blue_nums_table[i] += red_nums_table[i] * X;
+        red_nums_table[i - 1] = red_nums_table[i] + blue_nums_table[i];
+        blue_nums_table[i - 1] = blue_nums_table[i] * Y;
     }
 
-    println!("{}", blue_num);
+    println!("{}", blue_nums_table[1]);
 }
